@@ -14,14 +14,19 @@ namespace VidzKaique.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return new string[] { "value1", "value2" };
+            var sArray = new string[] { "Kaique", "C F J S" };
+            return sArray;
         }
 
-        // GET api/values/5
+        // GET http://localhost:5000/api/values/5
         [HttpGet("{id}")]
         public ActionResult<string> Get(int id)
         {
-            return "value";
+            var sArray = new string[]{ "Kaique", "C F J S"};
+            if (id > (sArray.Length - 1))
+            return "O valor digitado é maior do que o disponível";
+            
+            return sArray[id];
         }
 
         // POST api/values
