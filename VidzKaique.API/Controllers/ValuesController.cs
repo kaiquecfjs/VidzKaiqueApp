@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using VidzKaique.API.Data;
+using VidzKaique.API.Models;
 
 namespace VidzKaique.API.Controllers
 {
@@ -10,29 +13,40 @@ namespace VidzKaique.API.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly DataContext _context;
+        public ValuesController(DataContext context)
+        {
+            _context  = context;
+        }
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public async Task<IActionResult> GetValues() //Permite retornar resultados http
         {
-            var sArray = new string[] { "Kaique", "C F J S" };
-            return sArray;
+            var values = await _context.Values.ToListAsync();
+            return Ok(values);
         }
 
-        // GET http://localhost:5000/api/values/5
+        // GET http://localhost:5000/api/values/1
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public async Task<IActionResult> GetValues(int id) //ActionResult<string> Get(int id)
         {
-            var sArray = new string[]{ "Kaique", "C F J S"};
-            if (id > (sArray.Length - 1))
-            return "O valor digitado é maior do que o disponível";
+            var value = await _context.Values.FirstOrDefaultAsync(v => v.Id == id);
+
+            return Ok(value);
+            //var sArray = new string[]{ "Kaique", "Chaves", "Forenza", "Jesus", "dos", "Santos"};
+            //if (id > (sArray.Length - 1))
+            //return "O valor digitado é maior do que o disponível";
             
-            return sArray[id];
+            //return sArray[id];
         }
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> PostValue(Value value)
         {
+            _context.Values.Add(value);
+            await _context.SaveChangesAsync();
+            return StatusCode(201); //Creted
         }
 
         // PUT api/values/5
